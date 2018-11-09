@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="stock_inventory_line_form_view" model="ir.ui.view">
+        <field name="name">stock.adjustment.form</field>
+        <field name="model">stock.inventory</field>
+        <field name="inherit_id" ref="stock.view_inventory_form"/>
+        <field name="arch" type="xml">
+            <data>
+
+                <!--hide filter field-->
+                <field position="replace" name="filter">
+                    <field name="filter" invisible="1"/>
+                </field>
+
+                <field position="after" name="filter">
+                    <!--invisible is_exhausted field to compute the logic-->
+                    <field name="is_exhausted" invisible="1"/>
+
+                    <!--hidden fields-->
+                    <field name="partner_id" invisible="1"/>
+                    <field name="package_id" invisible="1"/>
+
+
+                        <field name="filter_all"/>
+                        <field name="filter_category"/>
+                        <field name="filter_only"/>
+                        <field name="filter_partial"/>
+                        <field name="filter_lot"/>
+                        <field name="filter_supplier"/>
+                        <field name="filter_brand"/>
+
+                </field>
+
+                <field position="replace" name="product_id">
+                    <field name="product_id" attrs="{'invisible': [('filter_only', '=', False)]}"/>
+                </field>
+                <field position="after" name="product_id">
+                    <field name="category_id" attrs="{'invisible': [('filter_category', '=', False)]}" options="{'no_create': True}"/>
+                </field>
+                <field position="replace" name="lot_id">
+                    <field name="lot_id" attrs="{'invisible': [('filter_lot', '=', False)]}"/>
+                </field>
+                <field position="replace" name="exhausted">
+                    <field name="exhausted" attrs="{'invisible': [('is_exhausted', '=', False)]}"/>
+                </field>
+                <field position="after" name="lot_id">
+                    <field name="supplier" attrs="{'invisible': [('filter_supplier', '=', False)]}"/>
+                </field>
+                <field position="after" name="lot_id">
+                    <field name="product_brand_id" attrs="{'invisible': [('filter_brand', '=', False)]}"/>
+                </field>
+
+                <xpath expr="//field[@name='line_ids']/tree//field[@name='product_id']" position="after">
+                    <field name="cg_id"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/tree//field[@name='theoretical_qty']" position="replace">
+                    <field name="theoretical_qty" sum="units" readonly="1"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/tree//field[@name='product_qty']" position="replace">
+                    <field name="product_qty" sum="units" string="Real Quantity"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/tree//field[@name='prod_lot_id']" position="after">
+                    <field name="expiry"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/tree//field[@name='product_qty']" position="after">
+                    <!--<field name="currency_id" invisible="1"/>-->
+                    <field name="value" sum="Value Total" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                </xpath>
+            </data>
+        </field>
+    </record>
+
+</odoo>
